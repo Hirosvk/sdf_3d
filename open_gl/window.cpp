@@ -2,9 +2,10 @@
 
 using namespace OpenGL;
 
-Window::Window(int screenWidth_, int screenHeight_) :
+Window::Window(int screenWidth_, int screenHeight_, InputHandler &inputHandler_) :
   screenWidth(screenWidth_),
-  screenHeight(screenHeight_)
+  screenHeight(screenHeight_),
+  inputHandler(inputHandler_)
 {
   initGLFW();
   initGL();
@@ -34,8 +35,16 @@ void Window::terminate() {
 }
 
 void Window::processInput() {
-  if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+  if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
+
+  } else {
+    for(auto key: inputHandler.keysToWatch) {
+      if(glfwGetKey(window, key) == GLFW_PRESS) {
+        inputHandler.handle(key);
+      }
+    }
+  }
 }
 
 void Window::clear() {

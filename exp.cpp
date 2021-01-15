@@ -1,17 +1,15 @@
 #include <iostream>
 #include <vector>
 
-int calc(int n, int (*f)(int) ) {
-  return f(n);
-}
-
-int twice(int n) {
-  return n * 2;
-}
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 int main () {
+  glm::vec3 v1(30.0, 30.0, 30.0);
+  glm::vec3 v2(20.0, 20.0, 20.0);
 
-  std::cout << calc(2, twice) << std::endl;
+  std::cout << (v1 - v2).r << std::endl;
 
   return 0;
 }

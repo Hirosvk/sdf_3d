@@ -23,6 +23,8 @@ namespace OpenGL {
 
     glm::mat4 view();
     glm::mat4 projection();
+    void rotate(float angleDeg);
+    void rotateV(float angleDeg);
 
     void set(glm::vec3 eye, glm::vec3 target);
   };
