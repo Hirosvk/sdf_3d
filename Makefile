@@ -19,7 +19,8 @@ exp:
 		-std=c++11\
 		-o exp.out\
 		-ferror-limit=5\
-		exp.cpp geometry/*.cpp
+		exp.cpp
+
 test:
 	g++\
 		-std=c++11\

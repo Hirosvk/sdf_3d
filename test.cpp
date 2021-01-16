@@ -44,9 +44,9 @@ int main () {
   SDF sdf = SDF(unit);
   SignedDistanceFunction *sdf_ptr = &sdf;
   Mesher mesher(
-    glm::vec2(-halfUnit, unit + halfUnit),
-    glm::vec2(-halfUnit, unit + halfUnit),
-    glm::vec2(-halfUnit, unit + halfUnit),
+    glm::vec2(-unit, unit * 2),
+    glm::vec2(-unit, unit * 2),
+    glm::vec2(-unit, unit * 2),
     halfUnit,
     *sdf_ptr
   );
@@ -83,7 +83,7 @@ int main () {
   mesher.generateCubes();
   int c = 0;
   for(auto &cube: mesher.cubes) {
-    if (cube->isIsosurface && cube->polygons.size() == 1) {
+    if (cube->isIsosurface && cube->polygons.size() > 0) {
       for(auto &polygon: cube->polygons) {
         std::cout
           << polygon->vertices[0]->point.x << ", "

@@ -36,6 +36,7 @@ void Mesher::generateCubes() {
     for(int y = 0; y < (voxels[x].size() - 1); y++) {
       for(int z = 0; z < (voxels[y].size() - 1); z++) {
         Voxels cubeVoxels;
+
         cubeVoxels.push_back(voxels[x][y][z]);
         cubeVoxels.push_back(voxels[x+1][y][z]);
         cubeVoxels.push_back(voxels[x+1][y+1][z]);

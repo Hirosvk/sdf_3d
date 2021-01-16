@@ -1,60 +1,14 @@
 #include <iostream>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include "geometry/signed_distance_function.h"
-#include "geometry/sphere.h"
-#include "geometry/mesher.h"
+#include <set>
 
 int main () {
-  //  Geometry::VoxelGrid grid;
-  //  Geometry::VoxelRowCol &plane = grid[0];
-  //  std::cout << plane.size() << std::endl;
-  //  return 0;
+  int i1[] = {0, 2, 3, 4};
+  std::set<int> s1(i1, i1+4);
 
-  Geometry::Sphere sphere(glm::vec3(0.0, 0.0, 0.0), 4.0f);
-  glm::vec2 xBounds(-5.0, 5.0);
-  glm::vec2 yBounds(-5.0, 5.0);
-  glm::vec2 zBounds(-5.0, 5.0);
-  float unit = 1.0;
+  int i2[] = {2, 0, 3, 4, 5};
+  std::set<int> s2(i2, i2+5);
 
-  Geometry::Mesher mesher(
-    xBounds,
-    yBounds,
-    zBounds,
-    unit,
-    sphere
-  );
-
-  mesher.generateVoxels();
-  std::cout << mesher.voxels.size() << std::endl;
-
-  for (auto &row: mesher.voxels) {
-    for (auto &col: row) {
-      for (auto &cell: col) {
-        if(cell->signedDistance < 0.1) {
-          std::cout
-            << cell->point.x << ","
-            << cell->point.y << ","
-            << cell->point.z << ","
-            << std::endl;
-        }
-      }
-    }
-  }
-  mesher.generateVertices();
-  std::cout << mesher.vertices.size() << std::endl;
-
-  //  std::vector<std::reference_wrapper<int>> vec;
-
-  //  if (true) {
-    //  int i = 5;
-    //  vec.push_back(std::ref(i));
-  //  }
-
-  //  std::cout << vec[0] << std::endl;
+  std::cout << (s1 == s2) << std::endl;
 
   return 0;
 }

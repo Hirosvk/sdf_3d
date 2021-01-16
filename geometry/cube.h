@@ -9,10 +9,11 @@
 #include "polygon.h"
 
 namespace Geometry {
-  typedef std::set<unsigned int> Ids;
+  typedef unsigned int Id;
+  typedef std::set<Id> Ids;
   typedef std::pair<Vertex*, Vertex*> VertexPair;
 
-  const unsigned int adjacencyLookup[8][3] = {
+  const Id adjacencyLookup[8][3] = {
   /*0*/ {1, 3, 4},
   /*1*/ {2, 0, 5},
   /*2*/ {3, 1, 6},
@@ -24,7 +25,17 @@ namespace Geometry {
   /*7*/ {3, 6, 4}
   };
 
+  const Id planeConfigs[6][4] = {
+    {0, 3, 2, 1},
+    {0, 1, 5, 4},
+    {4, 5, 6, 7},
+    {6, 2, 3, 7},
+    {0, 4, 7, 3},
+    {1, 2, 6, 5}
+  };
+
   class Cube {
+  public: // debug
     Voxels voxels;
     Vertices &vertices;
     std::vector<Ids> groupedVoxelIds;
@@ -35,10 +46,26 @@ namespace Geometry {
     void generatePolygon1Corner(Ids&);
     void generatePolygon1Side(Ids&);
 
-    Vertex* getVertex(unsigned int voxId); // when 2 of the adjacent voxels are negative
-    VertexPair getVertices(unsigned int voxId, unsigned int otherVoxId); // when only 1 of the adjacent voxels is negative
+    void generatePolygon3Corner(Ids&);
+    void generatePolygon4CornerPlane(Ids&);
 
-  public: // debug
+    int findPlaneId(Ids&group);
+    bool isPlaneConfig(Ids&);
+
+    Vertex* getVertex(Id voxId); // when 2 of the adjacent voxels are negative
+    VertexPair getVertices(Id voxId, Id otherVoxId); // when only 1 of the adjacent voxels is negative
+
+
+    int extractAdjacent(Ids &negSignedVoxIds, Id id, Ids &targetGroup);
+
+    int countFreeVox(Id voxId, Ids &group);
+
+    Id getFreeAdajacentVoxId(Id voxId, Id otherVoxId1, Id otherVoxId2);
+    Id getRightAdjacentVoxId(Id voxId, Id freeVoxId);
+    Id getLeftAdjacentVoxId(Id voxId, Id freeVoxId);
+
+    Ids getConnectedVoxIds(Id voxId, Ids &group);
+
     bool isIsosurface;
 
   public:
