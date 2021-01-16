@@ -19,5 +19,5 @@ exp:
 		-std=c++11\
 		-o exp.out\
 		-ferror-limit=5\
-		exp.cpp
+		exp.cpp geometry/*.cpp
 
