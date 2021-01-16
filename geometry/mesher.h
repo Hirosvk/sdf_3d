@@ -1,17 +1,26 @@
+#ifndef LOAD_MESHER
+#define LOAD_MESHER
+
 #include <iostream>
 #include <vector>
 
 #include "signed_distance_function.h"
 #include "voxel.h"
+#include "vertices.h"
+//  #include "cube.h"
 
 namespace Geometry {
   class Mesher {
     glm::vec2 xRange, yRange, zRange;
     float voxelUnit;
     SignedDistanceFunction &sdf;
+    //  std::vector<Cube*> cubes;
 
-  public:
+  public: // for debugging
     VoxelGrid voxels;
+    Vertices vertices;
+    void generateVoxels();
+    void generateVertices();
 
   public:
     Mesher(
@@ -22,7 +31,6 @@ namespace Geometry {
       SignedDistanceFunction &sdf_
     );
     ~Mesher();
-
-    void generateVoxels();
   };
 }
+#endif

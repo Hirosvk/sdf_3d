@@ -1,4 +1,6 @@
-#include <functional>
+#ifndef LOAD_VOXEL
+#define LOAD_VOXEL
+
 #include <vector>
 
 #include <glm/glm.hpp>
@@ -8,19 +10,22 @@
 namespace Geometry {
   class Voxel {
   public:
-    Voxel(int id_, glm::vec3 point_, float sd) :
+    Voxel(unsigned int id_, glm::vec3 point_, float sd, bool s) :
       id(id_),
       point(point_),
-      signedDistance(sd)
+      signedDistance(sd),
+      sign(s)
     {}
-    int id;
+    unsigned int id;
     glm::vec3 point;
     float signedDistance;
+    bool sign;
   };
 
-  //  typedef std::reference_wrapper<Voxel> VoxelRef;
-  //  typedef std::vector<VoxelRef> VoxelRow;
   typedef std::vector<Voxel*> VoxelRow;
   typedef std::vector<VoxelRow> VoxelRowCol;
   typedef std::vector<VoxelRowCol> VoxelGrid;
+
+  typedef VoxelRow Voxels;
 }
+#endif

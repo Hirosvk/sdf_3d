@@ -20,4 +20,10 @@ exp:
 		-o exp.out\
 		-ferror-limit=5\
 		exp.cpp geometry/*.cpp
+test:
+	g++\
+		-std=c++11\
+		-o test.out\
+		-ferror-limit=5\
+		test.cpp geometry/*.cpp
 

@@ -13,7 +13,8 @@ Mesher::Mesher(
   yRange(yRange_),
   zRange(zRange_),
   voxelUnit(voxelUnit_),
-  sdf(sdf_)
+  sdf(sdf_),
+  vertices(Vertices())
 {}
 
 Mesher::~Mesher() {
@@ -28,7 +29,7 @@ Mesher::~Mesher() {
 
 void Mesher::generateVoxels() {
   glm::vec3 currentPos(0.0);
-  int id = 0;
+  unsigned int id = 0;
 
   currentPos.x = xRange[0];
   while(currentPos.x < xRange[1]) {
@@ -42,10 +43,13 @@ void Mesher::generateVoxels() {
 
       currentPos.z = zRange[0];
       while(currentPos.z < zRange[1]) {
+        float distance = sdf(currentPos);
+
         Voxel *voxel = new Voxel(
           id,
           currentPos,
-          sdf(currentPos)
+          distance,
+          distance > 0
         );
         row.push_back(voxel);
 
@@ -55,5 +59,18 @@ void Mesher::generateVoxels() {
       currentPos.y += voxelUnit;
     }
     currentPos.x += voxelUnit;
+  }
+}
+void Mesher::generateVertices() {
+  for(int x = 0; x < (voxels.size() - 1); x++) {
+    for(int y = 0; y < (voxels[x].size() - 1); y++) {
+      for(int z = 0; z < (voxels[y].size() - 1); z++) {
+        Voxel &voxel = *voxels[x][y][z];
+
+        vertices.addVertex(voxel, *voxels[x+1][y][z]);
+        vertices.addVertex(voxel, *voxels[x][y+1][z]);
+        vertices.addVertex(voxel, *voxels[x][y][z+1]);
+      }
+    }
   }
 }

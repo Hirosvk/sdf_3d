@@ -44,6 +44,8 @@ int main () {
       }
     }
   }
+  mesher.generateVertices();
+  std::cout << mesher.vertices.size() << std::endl;
 
   //  std::vector<std::reference_wrapper<int>> vec;
 
