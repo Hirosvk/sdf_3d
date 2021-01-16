@@ -29,21 +29,24 @@ namespace Geometry {
     Vertices &vertices;
     std::vector<Ids> groupedVoxelIds;
 
-    bool isIsosurface;
-
     void groupVoxels(Ids&);
 
-    void generatePolygons();
     void generatePolygonsFromGroup(Ids&);
     void generatePolygon1Corner(Ids&);
+    void generatePolygon1Side(Ids&);
 
     Vertex* getVertex(unsigned int voxId); // when 2 of the adjacent voxels are negative
     VertexPair getVertices(unsigned int voxId, unsigned int otherVoxId); // when only 1 of the adjacent voxels is negative
 
+  public: // debug
+    bool isIsosurface;
+
   public:
     std::vector<Polygon*> polygons;
 
-    Cube(Voxel *voxels_, Vertices &vertices_);
+    Cube(Voxels &voxels_, Vertices &vertices_);
+
+    void generatePolygons();
   };
 }
 

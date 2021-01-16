@@ -18,7 +18,7 @@ namespace Geometry {
   };
 
   class Vertices {
-
+  public: // debug
     static unsigned long int getKey(unsigned int id1, unsigned int id2);
 
     std::map<unsigned long int, Vertex*> vertices;
@@ -32,7 +32,7 @@ namespace Geometry {
 
     unsigned int size();
     void addVertex(Voxel &v1, Voxel &v2);
-    Vertex findVertex(Voxel &v1, Voxel &v2);
+    Vertex *findVertex(Voxel &v1, Voxel &v2);
   };
 }
 #endif

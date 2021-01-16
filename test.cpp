@@ -54,18 +54,50 @@ int main () {
   mesher.generateVoxels();
   mesher.generateVertices();
 
-  std::cout << mesher.vertices.size() << std::endl;
+  //  std::cout << mesher.vertices.size() << std::endl;
 
-  for (auto &row: mesher.voxels) {
-    for (auto &col: row) {
-      for (auto &voxel: col) {
-        if (voxel->sign == false) {
-          std::cout
-            << voxel->point.x << ", "
-            << voxel->point.y << ", "
-            << voxel->point.z << ", "
-            << std::endl;
-        }
+  //  for (auto &row: mesher.voxels) {
+    //  for (auto &col: row) {
+      //  for (auto &voxel: col) {
+        //  if (voxel->sign == false) {
+          //  std::cout
+            //  << voxel->point.x << ", "
+            //  << voxel->point.y << ", "
+            //  << voxel->point.z << ", "
+            //  << std::endl;
+        //  }
+      //  }
+    //  }
+  //  }
+  //  return 0;
+
+  //  for(auto &vMap: mesher.vertices.vertices) {
+    //  std::cout
+      //  << vMap.second->point.x << ", "
+      //  << vMap.second->point.y << ", "
+      //  << vMap.second->point.z << ", "
+      //  << std::endl;
+  //  }
+  //  return 0;
+
+  mesher.generateCubes();
+  int c = 0;
+  for(auto &cube: mesher.cubes) {
+    if (cube->isIsosurface && cube->polygons.size() == 1) {
+      for(auto &polygon: cube->polygons) {
+        std::cout
+          << polygon->vertices[0]->point.x << ", "
+          << polygon->vertices[0]->point.y << ", "
+          << polygon->vertices[0]->point.z << ", "
+
+          << polygon->vertices[1]->point.x << ", "
+          << polygon->vertices[1]->point.y << ", "
+          << polygon->vertices[1]->point.z << ", "
+
+          << polygon->vertices[2]->point.x << ", "
+          << polygon->vertices[2]->point.y << ", "
+          << polygon->vertices[2]->point.z << ", "
+          << std::endl;
       }
     }
   }

@@ -8,6 +8,7 @@
 namespace Geometry {
   typedef std::vector<Vertex*> VertexTrio;
   class Polygon {
+  public:
     VertexTrio vertices;
 
     Polygon(Vertex* v1, Vertex* v2, Vertex* v3) {

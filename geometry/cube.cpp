@@ -1,12 +1,12 @@
-/*
+#include <iostream>
 
 #include "cube.h"
 
 using namespace Geometry;
 
-Cube::Cube(Voxel *voxels_, Vertices &vertices_) :
-  voxels(std::vector<Voxel*>(voxels, voxels + 8)),
-  vertices(&vertices_)
+Cube::Cube(Voxels &voxels_, Vertices &vertices_) :
+  voxels(Voxels(voxels_)),
+  vertices(vertices_)
 {
   Ids negSignedVoxIds;
   for(int i = 0; i < 8; i++) {
@@ -15,9 +15,9 @@ Cube::Cube(Voxel *voxels_, Vertices &vertices_) :
 
   unsigned int negSignedVoxCount = negSignedVoxIds.size();
   if (negSignedVoxCount == 0 || negSignedVoxCount == 8) {
-    isIsosurface = false
+    isIsosurface = false;
   } else {
-    isIsosurface = true
+    isIsosurface = true;
     groupVoxels(negSignedVoxIds);
   }
 }
@@ -43,7 +43,7 @@ void Cube::groupVoxels(Ids &negSignedVoxIds) {
 
     if (!inserted) {
       Ids newGroup;
-      pnewGroup.insert(id);
+      newGroup.insert(id);
       groupedVoxelIds.push_back(newGroup);
     }
   }
@@ -59,11 +59,12 @@ void Cube::generatePolygon1Corner(Ids &group) {
   unsigned int id = *group.begin();
   Voxels voxelsToConn;
   for (auto nextId: adjacencyLookup[id]) {
-    voxelsToConn.push_back(voxels[nextId])
+    voxelsToConn.push_back(voxels[nextId]);
   }
-  new Polygon *newPolygon( vertices.findVertex(voxels[id], voxelsToConn[0]),
-    vertices.findVertex(voxels[id], voxelsToConn[1]),
-    vertices.findVertex(voxels[id], voxelsToConn[2])
+  Polygon *newPolygon = new Polygon(
+    vertices.findVertex(*voxels[id], *voxelsToConn[0]),
+    vertices.findVertex(*voxels[id], *voxelsToConn[1]),
+    vertices.findVertex(*voxels[id], *voxelsToConn[2])
   );
   polygons.push_back(newPolygon);
 }
@@ -77,19 +78,19 @@ void Cube::generatePolygon1Side(Ids &group) {
   VertexPair vertices1 = getVertices(voxId1, voxId2);
   VertexPair vertices2 = getVertices(voxId2, voxId1);
 
-  new Polygon *newPolygon1(
+  Polygon *newPolygon1 = new Polygon(
     vertices1.first, vertices1.second, vertices2.first
   );
   polygons.push_back(newPolygon1);
 
-  new Polygon *newPolygon2(
+  Polygon *newPolygon2 = new Polygon(
     vertices2.first, vertices2.second, vertices1.first
   );
   polygons.push_back(newPolygon2);
 }
 
-VertexPair getVertices(unsigned int voxId, unsigned int otherVoxId) {
-  const int *ajacentVoxIds = adjacencyLookup[voxId];
+VertexPair Cube::getVertices(unsigned int voxId, unsigned int otherVoxId) {
+  const unsigned int *ajacentVoxIds = &(adjacencyLookup[voxId][0]);
   int voxId1, voxId2;
 
   for (int i = 0; i < 3; i++) {
@@ -100,9 +101,14 @@ VertexPair getVertices(unsigned int voxId, unsigned int otherVoxId) {
     }
   }
 
+  //  std::cout
+    //  << voxId << ", "
+    //  << voxId1 << ", "
+    //  << voxId2 << ", "
+    //  << std::endl;
   return VertexPair(
-    vertices.findVertex(voxels[voxId], voxels[voxId1],
-    vertices.findVertex(voxels[voxId], voxels[voxId2],
+    vertices.findVertex(*voxels[voxId], *voxels[voxId1]),
+    vertices.findVertex(*voxels[voxId], *voxels[voxId2])
   );
 }
 
@@ -113,19 +119,19 @@ void Cube::generatePolygonsFromGroup(Ids &group) {
       break;
     case 2:
       generatePolygon1Side(group);
-    case 3:
       break;
+    //  case 3:
+      //  break;
 
-    case 4:
-      break;
+    //  case 4:
+      //  break;
 
-    case 5:
-    case 6:
-    case 7:
-      break;
+    //  case 5:
+    //  case 6:
+    //  case 7:
+      //  break;
 
     default:
-      // error
+      std::cout << "default: " << group.size() << std::endl;
   }
 }
-*/

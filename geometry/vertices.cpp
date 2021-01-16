@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "vertices.h"
 
 using namespace Geometry;
@@ -18,9 +20,10 @@ void Vertices::addVertex(Voxel &v1, Voxel &v2) {
   vertices[id] = new Vertex(id, midPt);
 }
 
-Vertex Vertices::findVertex(Voxel &v1, Voxel &v2) {
+Vertex* Vertices::findVertex(Voxel &v1, Voxel &v2) {
   unsigned long int id = Vertices::getKey(v1.id, v2.id);
-  return Vertex(*(vertices.find(id)->second));
+  if (vertices.find(id) == vertices.end()) std::cout << "no vtx found" << std::endl;
+  return vertices.find(id)->second;
 }
 
 unsigned int Vertices::size() {
