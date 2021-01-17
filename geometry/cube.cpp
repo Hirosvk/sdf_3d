@@ -8,10 +8,6 @@ Cube::Cube(Voxels &voxels_, Vertices &vertices_) :
   voxels(Voxels(voxels_)),
   vertices(vertices_)
 {
-  //  Ids negSignedVoxIds;
-  //  for(int i = 0; i < 8; i++) {
-    //  if (voxels[i]->sign == false) negSignedVoxIds.insert(i);
-  //  }
   Ids recordedIds;
   for(int i = 0; i < 8; i++) {
     if (recordedIds.find(i) != recordedIds.end()) continue;
@@ -22,20 +18,13 @@ Cube::Cube(Voxels &voxels_, Vertices &vertices_) :
 
     recordedIds.insert(newGroup.begin(), newGroup.end());
     groupedVoxelIds.push_back(newGroup);
-    //  for(auto id: newGroup) {
-      //  std::cout << id << ", ";
-    //  }
-    //  std::cout << std::endl;
   }
 
 
-  //  Id negSignedVoxCount = negSignedVoxIds.size();
-  //  if (negSignedVoxCount == 0 || negSignedVoxCount == 8) {
   if (recordedIds.size() == 0 || recordedIds.size() == 8) {
     isIsosurface = false;
   } else {
     isIsosurface = true;
-    //  groupVoxels(negSignedVoxIds);
   }
 }
 
@@ -47,45 +36,6 @@ void Cube::crawl(Id id, Ids &targetGroup) {
 
   for(int i = 0; i < 3; i++) {
     crawl(adjacencyLookup[id][i], targetGroup);
-  }
-}
-
-int Cube::extractAdjacent(Ids &negSignedVoxIds, Id id, Ids &targetGroup) {
-  int count = 0;
-  for (auto nextId: adjacencyLookup[id]) {
-    if (targetGroup.find(nextId) != targetGroup.end()) continue;
-
-    if (negSignedVoxIds.find(nextId) != negSignedVoxIds.end()) {
-      targetGroup.insert(nextId);
-      negSignedVoxIds.erase(negSignedVoxIds.find(nextId));
-      count++;
-    }
-  }
-  return count;
-}
-
-void Cube::groupVoxels(Ids &negSignedVoxIds) {
-  while(!negSignedVoxIds.empty()) {
-    auto it = negSignedVoxIds.begin();
-    Id id = *it;
-    negSignedVoxIds.erase(it);
-
-    Ids newGroup;
-    newGroup.insert(id);
-
-    Ids checkedIds;
-
-    Id currentId = id;
-    while(extractAdjacent(negSignedVoxIds, currentId, newGroup) > 0) {
-      checkedIds.insert(currentId);
-
-      for (auto id_: newGroup) {
-        if (checkedIds.find(id_) == checkedIds.end()) {
-          currentId = *newGroup.find(id_);
-        }
-      }
-    }
-    groupedVoxelIds.push_back(newGroup);
   }
 }
 
@@ -141,11 +91,6 @@ VertexPair Cube::getVertices(Id voxId, Id otherVoxId) {
     }
   }
 
-  //  std::cout
-    //  << voxId << ", "
-    //  << voxId1 << ", "
-    //  << voxId2 << ", "
-    //  << std::endl;
   return VertexPair(
     vertices.findVertex(*voxels[voxId], *voxels[voxId1]),
     vertices.findVertex(*voxels[voxId], *voxels[voxId2])
@@ -208,7 +153,7 @@ Id Cube::getRightAdjacentVoxId(Id voxId, Id fromVoxId) {
   for(int i = 0; i < 3; i++) {
     if (fromVoxId == adjacencyLookup[voxId][i]) indexInLookup = i;
   }
-  return (indexInLookup + 1) % 3;
+  return adjacencyLookup[voxId][(indexInLookup + 1) % 3];
 }
 
 Id Cube::getLeftAdjacentVoxId(Id voxId, Id fromVoxId) {
@@ -216,7 +161,7 @@ Id Cube::getLeftAdjacentVoxId(Id voxId, Id fromVoxId) {
   for(int i = 0; i < 3; i++) {
     if (fromVoxId == adjacencyLookup[voxId][i]) indexInLookup = i;
   }
-  return (indexInLookup + 2) % 3;
+  return adjacencyLookup[voxId][(indexInLookup + 2) % 3];
 }
 
 void Cube::generatePolygon3Corner(Ids &group) {
@@ -237,24 +182,13 @@ void Cube::generatePolygon3Corner(Ids &group) {
 
   id2 = getRightAdjacentVoxId(id1, idA);
   idB = getRightAdjacentVoxId(id2, id1);
-  std::cout << "  checking idB" << std::endl;
   vtxB = vertices.findVertex(*voxels[id2], *voxels[idB]);
 
   id3 = getLeftAdjacentVoxId(id1, idA);
   idC = getLeftAdjacentVoxId(id3, id1);
-  std::cout << "  checking idC" << std::endl;
   vtxC = vertices.findVertex(*voxels[id3], *voxels[idC]);
 
   idx = getRightAdjacentVoxId(id2, idB);
-  if (idx != getLeftAdjacentVoxId(id3, idC)) {
-    std::cout << "  wrong here" << std::endl;
-
-    std::cout << "  "
-      << id1 << ", "
-      << id2 << ", "
-      << id3 << ", "
-      << std::endl;
-  }
 
   vtxD = vertices.findVertex(*voxels[id2], *voxels[idx]);
   vtxE = vertices.findVertex(*voxels[id3], *voxels[idx]);

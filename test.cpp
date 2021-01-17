@@ -17,8 +17,8 @@ int main () {
   float radius = 5.0;
   glm::vec3 origin(0.0, 0.0, 0.0);
 
-  // Sphere sdf = Sphere(origin, radius);
-  Square sdf = Square(origin, unit);
+  Sphere sdf = Sphere(origin, radius);
+  //  Square sdf = Square(origin, unit);
 
   SignedDistanceFunction *sdf_ptr = &sdf;
 
