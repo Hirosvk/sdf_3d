@@ -28,26 +28,6 @@ int main () {
   OpenGL::InputHandler inputHandler(camera);
   OpenGL::Window window(width, height, inputHandler);
 
-  //  float vertices_[] = {
-    //  5.035548844834139,
-    //  4.755530699947883,
-    //  80.69576856941576,
-
-    //  2.702701279245076,
-    //  -78.9807674850222,
-    //  0.0,
-
-    //  54.572561181482875,
-    //  4.755530699947869,
-    //  0.0
-  //  };
-  //  std::vector<float> vertices(vertices_, vertices_ + 9);
-  //  unsigned int indices_[] = {
-    //  0, 1, 2
-  //  };
-  //  std::vector<unsigned int> indices(indices_, indices_ + 3);
-
-
   float unit = 10.0;
   float halfUnit = unit / 2.0;
   float radius = 5.0;

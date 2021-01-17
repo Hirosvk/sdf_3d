@@ -30,6 +30,40 @@ glm::mat4 Camera::projection() {
   return glm::perspective(fov, screenRatio, near, far);
 }
 
+void Camera::moveHor(float distance) {
+  glm::mat4 input(1.0f);
+  glm::vec3 toTarget = eye - target;
+
+  glm::vec3 moveVec = glm::cross(toTarget, up);
+  float scale = distance / glm::length(moveVec);
+  moveVec = glm::vec3(moveVec.x * scale, moveVec.y * scale, moveVec.z * scale);
+
+  target += moveVec;
+  eye += moveVec;
+}
+
+void Camera::moveVir(float distance) {
+  glm::mat4 input(1.0f);
+
+  glm::vec3 moveVec = glm::vec3(up);
+  float scale = distance / glm::length(moveVec);
+  moveVec = glm::vec3(moveVec.x * scale, moveVec.y * scale, moveVec.z * scale);
+
+  target += moveVec;
+  eye += moveVec;
+}
+
+void Camera::zoom(float distance) {
+  glm::mat4 input(1.0f);
+
+  glm::vec3 moveVec = target - eye;
+  float scale = distance / glm::length(moveVec);
+  moveVec = glm::vec3(moveVec.x * scale, moveVec.y * scale, moveVec.z * scale);
+
+  target += moveVec;
+  eye += moveVec;
+}
+
 void Camera::rotate(float angleDeg) {
   glm::mat4 input(1.0f);
   input[0][3] = -target[0];

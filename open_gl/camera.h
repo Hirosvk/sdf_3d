@@ -25,6 +25,9 @@ namespace OpenGL {
     glm::mat4 projection();
     void rotate(float angleDeg);
     void rotateV(float angleDeg);
+    void moveHor(float distance);
+    void moveVir(float distance);
+    void zoom(float distance);
 
     void set(glm::vec3 eye, glm::vec3 target);
   };

@@ -16,6 +16,14 @@ namespace OpenGL {
     GLFW_KEY_LEFT_BRACKET,
     GLFW_KEY_EQUAL,
     GLFW_KEY_APOSTROPHE,
+
+    GLFW_KEY_RIGHT,
+    GLFW_KEY_LEFT,
+    GLFW_KEY_UP,
+    GLFW_KEY_DOWN,
+
+    GLFW_KEY_J,
+    GLFW_KEY_K
   };
 
   class InputHandler
