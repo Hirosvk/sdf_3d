@@ -4,9 +4,11 @@ using namespace OpenGL;
 
 Mesh::Mesh(
   std::vector<float> &vertices,
-  std::vector<unsigned int> &indices
+  std::vector<unsigned int> &indices,
+  glm::vec4 color_
 ) :
-  shader(Shader(vertexSource, fragmentSource))
+  shader(Shader(vertexSource, fragmentSource)),
+  color(color_)
 {
   glGenVertexArrays(1, &VAO);
   glBindVertexArray(VAO);
@@ -44,7 +46,7 @@ Mesh::Mesh(
   );
 
   shader.use();
-  shader.setRGBA("currentColor", 1.0f, 0.0f, 0.0f, 1.0f);
+  shader.setRGBA("currentColor", color[0], color[1], color[2], color[3]);
 
   glBindVertexArray(0);
 }

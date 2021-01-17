@@ -15,7 +15,11 @@ Mesher::Mesher(
   voxelUnit(voxelUnit_),
   sdf(sdf_),
   vertices(Vertices())
-{}
+{
+  generateVoxels();
+  generateVertices();
+  generateCubes();
+}
 
 Mesher::~Mesher() {
   for (auto &row: voxels) {

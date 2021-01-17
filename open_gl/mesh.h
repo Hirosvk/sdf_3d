@@ -39,10 +39,11 @@ namespace OpenGL {
 
   public:
     Shader shader;
+    glm::vec4 color;
     unsigned int VAO, VBO, EBO;
     unsigned int indexSize;
 
-    Mesh(std::vector<float> &vertices, std::vector<unsigned int> &indices);
+    Mesh(std::vector<float> &vertices, std::vector<unsigned int> &indices, glm::vec4 color);
     void draw(Camera &camera);
   };
 }
