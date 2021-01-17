@@ -8,17 +8,45 @@ Cube::Cube(Voxels &voxels_, Vertices &vertices_) :
   voxels(Voxels(voxels_)),
   vertices(vertices_)
 {
-  Ids negSignedVoxIds;
+  //  Ids negSignedVoxIds;
+  //  for(int i = 0; i < 8; i++) {
+    //  if (voxels[i]->sign == false) negSignedVoxIds.insert(i);
+  //  }
+  Ids recordedIds;
   for(int i = 0; i < 8; i++) {
-    if (voxels[i]->sign == false) negSignedVoxIds.insert(i);
+    if (recordedIds.find(i) != recordedIds.end()) continue;
+
+    Ids newGroup;
+    crawl(i, newGroup);
+    if(newGroup.empty()) continue;
+
+    recordedIds.insert(newGroup.begin(), newGroup.end());
+    groupedVoxelIds.push_back(newGroup);
+    //  for(auto id: newGroup) {
+      //  std::cout << id << ", ";
+    //  }
+    //  std::cout << std::endl;
   }
 
-  Id negSignedVoxCount = negSignedVoxIds.size();
-  if (negSignedVoxCount == 0 || negSignedVoxCount == 8) {
+
+  //  Id negSignedVoxCount = negSignedVoxIds.size();
+  //  if (negSignedVoxCount == 0 || negSignedVoxCount == 8) {
+  if (recordedIds.size() == 0 || recordedIds.size() == 8) {
     isIsosurface = false;
   } else {
     isIsosurface = true;
-    groupVoxels(negSignedVoxIds);
+    //  groupVoxels(negSignedVoxIds);
+  }
+}
+
+void Cube::crawl(Id id, Ids &targetGroup) {
+  if (targetGroup.find(id) != targetGroup.end()) return;
+  if (voxels[id]->sign != false) return;
+
+  targetGroup.insert(id);
+
+  for(int i = 0; i < 3; i++) {
+    crawl(adjacencyLookup[id][i], targetGroup);
   }
 }
 
@@ -128,17 +156,17 @@ void Cube::generatePolygon4CornerPlane(Ids&group) {
   int planeId = findPlaneId(group);
   const Id *voxId = planeConfigs[planeId];
 
-  Id otherId1 = getFreeAdajacentVoxId(*voxId, *(voxId + 1), *(voxId + 3));
+  Id otherId1 = *getFreeVoxIds(*voxId, group).begin();
   Vertex *vt1 = vertices.findVertex(*voxels[*voxId], *voxels[otherId1]);
 
-  Id otherId2 = getFreeAdajacentVoxId(*(voxId + 1), *(voxId + 2), *voxId);
-  Vertex *vt2 = vertices.findVertex(*voxels[*(voxId + 1)], *voxels[otherId2]);
+  Id otherId2 = *getFreeVoxIds(*(voxId+1), group).begin();
+  Vertex *vt2 = vertices.findVertex(*voxels[*(voxId+1)], *voxels[otherId2]);
 
-  Id otherId3 = getFreeAdajacentVoxId(*(voxId + 2), *(voxId + 1), *(voxId + 3));
-  Vertex *vt3 = vertices.findVertex(*voxels[*(voxId + 2)], *voxels[otherId3]);
+  Id otherId3 = *getFreeVoxIds(*(voxId+2), group).begin();
+  Vertex *vt3 = vertices.findVertex(*voxels[*(voxId+2)], *voxels[otherId3]);
 
-  Id otherId4 = getFreeAdajacentVoxId(*(voxId + 3), *voxId, *(voxId + 2));
-  Vertex *vt4 = vertices.findVertex(*voxels[*(voxId + 3)], *voxels[otherId4]);
+  Id otherId4 = *getFreeVoxIds(*(voxId+3), group).begin();
+  Vertex *vt4 = vertices.findVertex(*voxels[*(voxId+3)], *voxels[otherId4]);
 
   Polygon *polygon1 = new Polygon(vt1, vt4, vt3);
   polygons.push_back(polygon1);
@@ -156,6 +184,16 @@ Ids Cube::getConnectedVoxIds(Id voxId, Ids &group) {
   return Ids(ids);
 }
 
+Ids Cube::getFreeVoxIds(Id voxId, Ids &group) {
+  Ids ids;
+  for (int i = 0; i < 3; i++) {
+    if (group.find(adjacencyLookup[voxId][i]) == group.end()) {
+      ids.insert(adjacencyLookup[voxId][i]);
+    }
+  }
+  return Ids(ids);
+}
+
 
 int Cube::findPlaneId(Ids&group) {
   for (int i = 0; i < 6; i++) {
@@ -165,38 +203,73 @@ int Cube::findPlaneId(Ids&group) {
   return -1;
 }
 
-Id Cube::getFreeAdajacentVoxId(Id voxId, Id otherVoxId1, Id otherVoxId2) {
-  for(auto id: adjacencyLookup[voxId]) {
-    if (id != otherVoxId1 && id != otherVoxId2) return id;
+Id Cube::getRightAdjacentVoxId(Id voxId, Id fromVoxId) {
+  Id indexInLookup;
+  for(int i = 0; i < 3; i++) {
+    if (fromVoxId == adjacencyLookup[voxId][i]) indexInLookup = i;
   }
-  return -1;
+  return (indexInLookup + 1) % 3;
 }
 
-//  Id Cube::getRightAdjacentVoxId(Id voxId, Id freeVoxId) {
-  //  Id indexInLookup;
-  //  for(int i = 0; i < 3; i++) {
-    //  if (freeVoxId == adjacencyLookup[voxId][i]) indexInLookup = i;
-  //  }
-  //  return (i + 1) % 3;
-//  }
+Id Cube::getLeftAdjacentVoxId(Id voxId, Id fromVoxId) {
+  Id indexInLookup;
+  for(int i = 0; i < 3; i++) {
+    if (fromVoxId == adjacencyLookup[voxId][i]) indexInLookup = i;
+  }
+  return (indexInLookup + 2) % 3;
+}
 
-//  Id Cube::getLeftAdjacentVoxId(Id voxId, Id freeVoxId) {
-  //  Id indexInLookup;
-  //  for(int i = 0; i < 3; i++) {
-    //  if (freeVoxId = adjacencyLookup[voxId][i]) indexInLookup = i;
-  //  }
-  //  return (i + 2) % 3;
-//  }
+void Cube::generatePolygon3Corner(Ids &group) {
+  Id id1, id2, id3, idx;
+  Id idA, idB, idC, idD, idE;
+  Vertex *vtxA, *vtxB, *vtxC, *vtxD, *vtxE;
 
-//  void Cube::generatePolygon3Corner(Ids &group) {
-  //  Id VoxIdWith1Free;
-  //  for(auto id: group) {
-    //  if (countFreeVox(id) == 1) {
-      //  VoxIdWith1Free = id;
-      //  break;
-    //  }
-  //  }
-//  }
+  for (auto id: group) {
+    Ids freeVoxIds = getFreeVoxIds(id, group);
+
+    if (freeVoxIds.size() == 1) {
+      id1 = id;
+      idA = *freeVoxIds.begin();
+      vtxA = vertices.findVertex(*voxels[id1], *voxels[idA]);
+      break;
+    }
+  }
+
+  id2 = getRightAdjacentVoxId(id1, idA);
+  idB = getRightAdjacentVoxId(id2, id1);
+  std::cout << "  checking idB" << std::endl;
+  vtxB = vertices.findVertex(*voxels[id2], *voxels[idB]);
+
+  id3 = getLeftAdjacentVoxId(id1, idA);
+  idC = getLeftAdjacentVoxId(id3, id1);
+  std::cout << "  checking idC" << std::endl;
+  vtxC = vertices.findVertex(*voxels[id3], *voxels[idC]);
+
+  idx = getRightAdjacentVoxId(id2, idB);
+  if (idx != getLeftAdjacentVoxId(id3, idC)) {
+    std::cout << "  wrong here" << std::endl;
+
+    std::cout << "  "
+      << id1 << ", "
+      << id2 << ", "
+      << id3 << ", "
+      << std::endl;
+  }
+
+  vtxD = vertices.findVertex(*voxels[id2], *voxels[idx]);
+  vtxE = vertices.findVertex(*voxels[id3], *voxels[idx]);
+
+  Polygon *newPolygon1 = new Polygon(vtxA, vtxB, vtxC);
+  polygons.push_back(newPolygon1);
+  Polygon *newPolygon2 = new Polygon(vtxB, vtxD, vtxC);
+  polygons.push_back(newPolygon2);
+  Polygon *newPolygon3 = new Polygon(vtxD, vtxE, vtxC);
+  polygons.push_back(newPolygon3);
+}
+
+int Cube::countFreeVox(Id voxId, Ids &group) {
+  return 3 - getConnectedVoxIds(voxId, group).size();
+}
 
 void Cube::generatePolygonsFromGroup(Ids &group) {
   std::cout << "group size: " << group.size() << std::endl;
@@ -207,8 +280,10 @@ void Cube::generatePolygonsFromGroup(Ids &group) {
     case 2:
       generatePolygon1Side(group);
       break;
-    //  case 3:
-      //  break;
+
+    case 3:
+      generatePolygon3Corner(group);
+      break;
 
     case 4:
       if (findPlaneId(group) >= 0) {

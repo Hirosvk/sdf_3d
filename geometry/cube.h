@@ -27,6 +27,11 @@ namespace Geometry {
 
   const Id planeConfigs[6][4] = {
     {0, 3, 2, 1},
+      // =>
+      // {
+      //    { {0, 4}, {1,5}, {3, 7} },
+      //    { {0, 4}, {1,5}, {3, 7} },
+      // }
     {0, 1, 5, 4},
     {4, 5, 6, 7},
     {6, 2, 3, 7},
@@ -34,11 +39,27 @@ namespace Geometry {
     {1, 2, 6, 5}
   };
 
+  //  const Id planeConfigs[6][2][2] = {
+    //  {
+      //  { {0,4}, {1,5}, {3,7} },
+      //  { {1,5}, {2,6}, {3,7} },
+    //  }
+  //  };
+
+  const Id TriCornerConfigs[24][3] = {
+    {0, 1, 3},
+      // => { {0, 4}, {1, 5}, {3, 7} }
+      // => { {1, 5}, {1, 2}, {3, 7} }
+  };
+
   class Cube {
   public: // debug
     Voxels voxels;
     Vertices &vertices;
     std::vector<Ids> groupedVoxelIds;
+
+
+    void crawl(Id id, Ids &targetGroup);
 
     void groupVoxels(Ids&);
 
@@ -60,11 +81,11 @@ namespace Geometry {
 
     int countFreeVox(Id voxId, Ids &group);
 
-    Id getFreeAdajacentVoxId(Id voxId, Id otherVoxId1, Id otherVoxId2);
-    Id getRightAdjacentVoxId(Id voxId, Id freeVoxId);
+    Id getRightAdjacentVoxId(Id voxId, Id fromVoxId);
     Id getLeftAdjacentVoxId(Id voxId, Id freeVoxId);
 
     Ids getConnectedVoxIds(Id voxId, Ids &group);
+    Ids getFreeVoxIds(Id voxId, Ids &group);
 
     bool isIsosurface;
 

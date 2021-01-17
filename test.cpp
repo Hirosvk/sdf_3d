@@ -6,6 +6,7 @@
 
 #include "geometry/signed_distance_function.h"
 #include "geometry/square.h"
+#include "geometry/sphere.h"
 #include "geometry/mesher.h"
 
 
@@ -13,16 +14,19 @@ using namespace Geometry;
 int main () {
   float unit = 10.0;
   float halfUnit = unit / 2.0;
-  glm::vec3 origin(5.0, 0.0, 0.0);
+  float radius = 5.0;
+  glm::vec3 origin(0.0, 0.0, 0.0);
 
+  // Sphere sdf = Sphere(origin, radius);
   Square sdf = Square(origin, unit);
+
   SignedDistanceFunction *sdf_ptr = &sdf;
 
   Mesher mesher(
     glm::vec2(-unit, unit * 2),
     glm::vec2(-unit, unit * 2),
     glm::vec2(-unit, unit * 2),
-    halfUnit,
+    unit / 3.0,
     *sdf_ptr
   );
 
