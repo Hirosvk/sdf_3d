@@ -13,18 +13,3 @@ main:
 		-ferror-limit=5\
 		main.cpp\
 		open_gl/*.cpp geometry/*.cpp
-
-exp:
-	g++\
-		-std=c++11\
-		-o exp.out\
-		-ferror-limit=5\
-		exp.cpp
-
-test:
-	g++\
-		-std=c++11\
-		-o test.out\
-		-ferror-limit=5\
-		test.cpp geometry/*.cpp
-
