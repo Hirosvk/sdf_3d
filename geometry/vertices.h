@@ -13,6 +13,7 @@
 namespace Geometry {
   struct Vertex {
     unsigned long int id;
+    unsigned int glId;
     glm::vec3 point;
     Vertex(unsigned long int i, glm::vec3 p) : id(i), point(p) {}
   };

@@ -30,6 +30,39 @@ Mesher::~Mesher() {
     delete cube;
   }
 }
+void Mesher::generatePolygons(std::vector<float> &targetVertices, std::vector<unsigned int> &targetIndices) {
+  std::set<Polygon*> polygonSet;
+  std::set<Vertex*> vertexSet;
+  std::map<unsigned int, Vertex*> vertexMap;
+
+  for(auto &cube: cubes) {
+    for (auto &polygon: cube->polygons) {
+      polygonSet.insert(polygon);
+      for (auto &vertex: polygon->vertices) {
+        vertexSet.insert(vertex);
+      }
+    }
+  }
+
+  unsigned int GLId = 0;
+  for(auto &vertex: vertexSet) {
+    vertex->glId = GLId;
+    vertexMap[vertex->glId] = vertex;
+    GLId++;
+  }
+
+  for(int i = 0; i < GLId; i++) {
+    targetVertices.push_back(vertexMap[i]->point.x);
+    targetVertices.push_back(vertexMap[i]->point.y);
+    targetVertices.push_back(vertexMap[i]->point.z);
+  }
+
+  for(auto &polygon: polygonSet) {
+    targetIndices.push_back(polygon->vertices[0]->glId);
+    targetIndices.push_back(polygon->vertices[1]->glId);
+    targetIndices.push_back(polygon->vertices[2]->glId);
+  }
+}
 
 void Mesher::generateCubes() {
   for(int x = 0; x < (voxels.size() - 1); x++) {

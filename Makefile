@@ -12,7 +12,7 @@ main:
 		-o main.out\
 		-ferror-limit=5\
 		main.cpp\
-		open_gl/*.cpp
+		open_gl/*.cpp geometry/*.cpp
 
 exp:
 	g++\

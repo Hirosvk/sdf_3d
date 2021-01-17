@@ -26,7 +26,7 @@ int main () {
     glm::vec2(-unit, unit * 2),
     glm::vec2(-unit, unit * 2),
     glm::vec2(-unit, unit * 2),
-    unit / 10.0,
+    unit / 20.0,
     *sdf_ptr
   );
 
@@ -34,25 +34,47 @@ int main () {
   mesher.generateVertices();
   mesher.generateCubes();
 
-  int c = 0;
-  for(auto &cube: mesher.cubes) {
-    if (cube->isIsosurface && cube->polygons.size() > 0) {
-      for(auto &polygon: cube->polygons) {
-        std::cout
-          << polygon->vertices[0]->point.x << ", "
-          << polygon->vertices[0]->point.y << ", "
-          << polygon->vertices[0]->point.z << ", "
+  //  int c = 0;
+  //  for(auto &cube: mesher.cubes) {
+    //  if (cube->isIsosurface && cube->polygons.size() > 0) {
+      //  for(auto &polygon: cube->polygons) {
+        //  std::cout
+          //  << polygon->vertices[0]->point.x << ", "
+          //  << polygon->vertices[0]->point.y << ", "
+          //  << polygon->vertices[0]->point.z << ", "
 
-          << polygon->vertices[1]->point.x << ", "
-          << polygon->vertices[1]->point.y << ", "
-          << polygon->vertices[1]->point.z << ", "
+          //  << polygon->vertices[1]->point.x << ", "
+          //  << polygon->vertices[1]->point.y << ", "
+          //  << polygon->vertices[1]->point.z << ", "
 
-          << polygon->vertices[2]->point.x << ", "
-          << polygon->vertices[2]->point.y << ", "
-          << polygon->vertices[2]->point.z << ", "
-          << std::endl;
-      }
-    }
+          //  << polygon->vertices[2]->point.x << ", "
+          //  << polygon->vertices[2]->point.y << ", "
+          //  << polygon->vertices[2]->point.z << ", "
+          //  << std::endl;
+      //  }
+    //  }
+  //  }
+
+  std::vector<glm::vec3> vertices;
+  std::vector<unsigned int> indices;
+  mesher.generatePolygons(vertices, indices);
+
+  std::cout << vertices.size() << std::endl;
+  for(auto vtx: vertices) {
+    std::cout
+      << vtx.x << ", "
+      << vtx.y << ", "
+      << vtx.z << ", "
+      << std::endl;
+  }
+  std::cout << "============" << std::endl;
+  std::cout << indices.size() << std::endl;
+  for(int idx = 0; idx < indices.size(); idx+=3) {
+    std::cout
+      << indices[idx] << ", "
+      << indices[idx+1] << ", "
+      << indices[idx+2] << ", "
+      << std::endl;
   }
 
   return 0;

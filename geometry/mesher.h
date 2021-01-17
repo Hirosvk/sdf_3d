@@ -3,6 +3,12 @@
 
 #include <iostream>
 #include <vector>
+#include <set>
+#include <map>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "signed_distance_function.h"
 #include "voxel.h"
@@ -32,6 +38,8 @@ namespace Geometry {
       SignedDistanceFunction &sdf_
     );
     ~Mesher();
+
+    void generatePolygons(std::vector<float>&, std::vector<unsigned int>&);
   };
 }
 #endif

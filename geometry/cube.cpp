@@ -320,7 +320,6 @@ Ids Cube::reverseGroup(Ids&group) {
 }
 
 void Cube::generatePolygonsFromGroup(Ids &group) {
-  std::cout << "group size: " << group.size() << std::endl;
   switch(group.size()) {
     case 1: {
       generatePolygon1Corner(group);
