@@ -2,6 +2,7 @@
 #define LOAD_POLYGON
 
 #include <vector>
+#include <algorithm>
 
 #include "vertices.h"
 
@@ -15,6 +16,10 @@ namespace Geometry {
       vertices.push_back(v1);
       vertices.push_back(v2);
       vertices.push_back(v3);
+    }
+
+    void reverse() {
+      std::reverse(vertices.begin(), vertices.end());
     }
   };
 }

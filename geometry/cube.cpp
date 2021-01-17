@@ -45,7 +45,7 @@ void Cube::generatePolygons() {
   }
 }
 
-void Cube::generatePolygon1Corner(Ids &group) {
+void Cube::generatePolygon1Corner(Ids &group, bool reverse = false) {
   Id id = *group.begin();
   Voxels voxelsToConn;
   for (auto nextId: adjacencyLookup[id]) {
@@ -56,10 +56,12 @@ void Cube::generatePolygon1Corner(Ids &group) {
     vertices.findVertex(*voxels[id], *voxelsToConn[1]),
     vertices.findVertex(*voxels[id], *voxelsToConn[2])
   );
+
+  if (reverse) newPolygon->reverse();
   polygons.push_back(newPolygon);
 }
 
-void Cube::generatePolygon1Side(Ids &group) {
+void Cube::generatePolygon2Corner(Ids &group, bool reverse = false) {
   auto it = group.begin();
   Id voxId1 = *it;
   it++;
@@ -71,11 +73,13 @@ void Cube::generatePolygon1Side(Ids &group) {
   Polygon *newPolygon1 = new Polygon(
     vertices1.first, vertices1.second, vertices2.first
   );
+  if (reverse) newPolygon1->reverse();
   polygons.push_back(newPolygon1);
 
   Polygon *newPolygon2 = new Polygon(
     vertices2.first, vertices2.second, vertices1.first
   );
+  if (reverse) newPolygon2->reverse();
   polygons.push_back(newPolygon2);
 }
 
@@ -115,6 +119,7 @@ void Cube::generatePolygon4CornerPlane(Ids&group) {
 
   Polygon *polygon1 = new Polygon(vt1, vt4, vt3);
   polygons.push_back(polygon1);
+
   Polygon *polygon2 = new Polygon(vt1, vt3, vt2);
   polygons.push_back(polygon2);
 }
@@ -164,7 +169,103 @@ Id Cube::getLeftAdjacentVoxId(Id voxId, Id fromVoxId) {
   return adjacencyLookup[voxId][(indexInLookup + 2) % 3];
 }
 
-void Cube::generatePolygon3Corner(Ids &group) {
+void Cube::generatePolygon4CornerCone(Ids &group, Id headVoxId) {
+  Id id1, id2, id3, idx;
+  Id idA, idB, idC;
+
+  idx = headVoxId;
+
+  id1 = *getConnectedVoxIds(headVoxId, group).begin();
+  id2 = getRightAdjacentVoxId(idx, id1);
+  id3 = getLeftAdjacentVoxId(idx, id1);
+
+  idA = getLeftAdjacentVoxId(id1, idx);
+  idB = getLeftAdjacentVoxId(id2, idx);
+  idC = getLeftAdjacentVoxId(id3, idx);
+
+  Polygon *polygon1 = new Polygon(
+    vertices.findVertex(*voxels[id1], *voxels[idA]),
+    vertices.findVertex(*voxels[id2], *voxels[idB]),
+    vertices.findVertex(*voxels[id3], *voxels[idC])
+  );
+  polygons.push_back(polygon1);
+
+  Polygon *polygon2 = new Polygon(
+    vertices.findVertex(*voxels[id1], *voxels[idA]),
+    vertices.findVertex(*voxels[idA], *voxels[id2]),
+    vertices.findVertex(*voxels[id2], *voxels[idB])
+  );
+  polygons.push_back(polygon2);
+
+  Polygon *polygon3 = new Polygon(
+    vertices.findVertex(*voxels[id2], *voxels[idB]),
+    vertices.findVertex(*voxels[idB], *voxels[id3]),
+    vertices.findVertex(*voxels[id3], *voxels[idC])
+  );
+  polygons.push_back(polygon3);
+
+  Polygon *polygon4 = new Polygon(
+    vertices.findVertex(*voxels[id3], *voxels[idC]),
+    vertices.findVertex(*voxels[idC], *voxels[id1]),
+    vertices.findVertex(*voxels[id1], *voxels[idA])
+  );
+  polygons.push_back(polygon4);
+}
+
+// This method has not been tested!!
+void Cube::generatePolygon4CornerOther(Ids &group) {
+  Id id1, id2, id3, id4;
+  Id idA, idB, idC, idD;
+
+  bool foundOne = false;
+  for(auto i: group) {
+    if (getFreeVoxIds(i, group).size() == 2) {
+      if (!foundOne) {
+        id1 = i;
+        id2 = *getConnectedVoxIds(i, group).begin();
+      } else {
+        id4 = i;
+        id3 = *getConnectedVoxIds(i, group).begin();
+      }
+    }
+  }
+
+  idA = getLeftAdjacentVoxId(id1, id2);
+  idD = getLeftAdjacentVoxId(id4, id3);
+
+  idB = *getFreeVoxIds(id2, group).begin();
+  idC = *getFreeVoxIds(id3, group).begin();
+
+  Polygon *polygon1 = new Polygon(
+    vertices.findVertex(*voxels[id1], *voxels[idA]),
+    vertices.findVertex(*voxels[id4], *voxels[idB]),
+    vertices.findVertex(*voxels[id3], *voxels[idC])
+  );
+  polygons.push_back(polygon1);
+
+  Polygon *polygon2 = new Polygon(
+    vertices.findVertex(*voxels[id1], *voxels[idA]),
+    vertices.findVertex(*voxels[id2], *voxels[idB]),
+    vertices.findVertex(*voxels[id4], *voxels[idB])
+  );
+  polygons.push_back(polygon2);
+
+  Polygon *polygon3 = new Polygon(
+    vertices.findVertex(*voxels[idB], *voxels[id4]),
+    vertices.findVertex(*voxels[idD], *voxels[id4]),
+    vertices.findVertex(*voxels[id3], *voxels[idC])
+  );
+  polygons.push_back(polygon3);
+
+  Polygon *polygon4 = new Polygon(
+    vertices.findVertex(*voxels[id1], *voxels[idC]),
+    vertices.findVertex(*voxels[id1], *voxels[idA]),
+    vertices.findVertex(*voxels[id3], *voxels[idC])
+  );
+  polygons.push_back(polygon4);
+}
+
+void Cube::generatePolygon3Corner(Ids &group, bool reverse = false) {
   Id id1, id2, id3, idx;
   Id idA, idB, idC, idD, idE;
   Vertex *vtxA, *vtxB, *vtxC, *vtxD, *vtxE;
@@ -194,10 +295,15 @@ void Cube::generatePolygon3Corner(Ids &group) {
   vtxE = vertices.findVertex(*voxels[id3], *voxels[idx]);
 
   Polygon *newPolygon1 = new Polygon(vtxA, vtxB, vtxC);
+  if (reverse) newPolygon1->reverse();
   polygons.push_back(newPolygon1);
+
   Polygon *newPolygon2 = new Polygon(vtxB, vtxD, vtxC);
+  if (reverse) newPolygon2->reverse();
   polygons.push_back(newPolygon2);
+
   Polygon *newPolygon3 = new Polygon(vtxD, vtxE, vtxC);
+  if (reverse) newPolygon3->reverse();
   polygons.push_back(newPolygon3);
 }
 
@@ -205,34 +311,77 @@ int Cube::countFreeVox(Id voxId, Ids &group) {
   return 3 - getConnectedVoxIds(voxId, group).size();
 }
 
+Ids Cube::reverseGroup(Ids&group) {
+  Ids result;
+  for (auto i = 0; i < 8; i++) {
+    if (group.find(i) == group.end()) result.insert(i);
+  }
+  return Ids(result);
+}
+
 void Cube::generatePolygonsFromGroup(Ids &group) {
   std::cout << "group size: " << group.size() << std::endl;
   switch(group.size()) {
-    case 1:
+    case 1: {
       generatePolygon1Corner(group);
       break;
-    case 2:
-      generatePolygon1Side(group);
-      break;
+    }
 
-    case 3:
+    case 2: {
+      generatePolygon2Corner(group);
+      break;
+    }
+
+    case 3: {
       generatePolygon3Corner(group);
       break;
+    }
 
     case 4:
       if (findPlaneId(group) >= 0) {
         generatePolygon4CornerPlane(group);
       } else {
-        std::cout << "not plane" << std::endl;
+        bool isCone = false;
+        Id headVoxId;
+        for(auto i: group) {
+          if (getFreeVoxIds(i, group).empty()) {
+            isCone = true;
+            headVoxId = i;
+            break;
+          }
+        }
+
+        if (isCone) {
+          generatePolygon4CornerCone(group, headVoxId);
+        } else {
+          generatePolygon4CornerOther(group);
+        }
       }
       break;
 
-    //  case 5:
-    //  case 6:
-    //  case 7:
-      //  break;
+    case 5: {
+      Ids reversedGroup = reverseGroup(group);
+      generatePolygon3Corner(reversedGroup, true);
+      break;
+    }
 
+    case 6:  {
+      Ids reversedGroup = reverseGroup(group);
+      generatePolygon2Corner(reversedGroup, true);
+      break;
+    }
+
+    case 7: {
+      Ids reversedGroup = reverseGroup(group);
+      generatePolygon1Corner(reversedGroup, true);
+      break;
+    }
+
+    case 8: {
+      // this shouldn't happen... but it does; investigate
+      break;
+    }
     default:
-      std::cout << "default: " << std::endl;
+      std::cout << "Unexpected Configuration!! " << group.size() << std::endl;
   }
 }

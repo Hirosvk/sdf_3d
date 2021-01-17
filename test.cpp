@@ -26,7 +26,7 @@ int main () {
     glm::vec2(-unit, unit * 2),
     glm::vec2(-unit, unit * 2),
     glm::vec2(-unit, unit * 2),
-    unit / 3.0,
+    unit / 10.0,
     *sdf_ptr
   );
 

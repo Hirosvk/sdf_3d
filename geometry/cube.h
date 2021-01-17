@@ -64,11 +64,14 @@ namespace Geometry {
     void groupVoxels(Ids&);
 
     void generatePolygonsFromGroup(Ids&);
-    void generatePolygon1Corner(Ids&);
-    void generatePolygon1Side(Ids&);
 
-    void generatePolygon3Corner(Ids&);
+    void generatePolygon1Corner(Ids&, bool reverse);
+    void generatePolygon2Corner(Ids&, bool reverse);
+    void generatePolygon3Corner(Ids&, bool reverse);
+
     void generatePolygon4CornerPlane(Ids&);
+    void generatePolygon4CornerCone(Ids&, Id);
+    void generatePolygon4CornerOther(Ids&);
 
     int findPlaneId(Ids&group);
     bool isPlaneConfig(Ids&);
@@ -86,6 +89,7 @@ namespace Geometry {
 
     Ids getConnectedVoxIds(Id voxId, Ids &group);
     Ids getFreeVoxIds(Id voxId, Ids &group);
+    Ids reverseGroup(Ids&group);
 
     bool isIsosurface;
 
@@ -97,12 +101,4 @@ namespace Geometry {
     void generatePolygons();
   };
 }
-
-/*
- * 1 corner
- * 2 side => 1 side
- * 3 corners
- * 4 corner - plane
- * 4 corner - not plane
- */
 #endif
